@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meteo App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #6dd5fa, #2980b9);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 70%;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #e68900;
+    }
+
+    #weather {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Meteo</h1>
+    <input type="text" id="city" placeholder="Inserisci una città">
+    <button onclick="getWeather()">Verifica Meteo</button>
+
+    <div id="weather"></div>
+  </div>
+
+  <script>
+    const apiKey = "a6231f7504094ff896a172316250711"; 
+
+    async function getWeather() {
+      const city = document.getElementById("city").value;
+      const weatherDiv = document.getElementById("weather");
+
+      if (!city) {
+        weatherDiv.innerHTML = "Per favore, inserisci una città.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&lang=it`);
+        if (!response.ok) throw new Error("Città non trovata");
+        const data = await response.json();
+
+        weatherDiv.innerHTML = `
+          <h2>${data.location.name}, ${data.location.country}</h2>
+          <p>Temperatura: ${data.current.temp_c}°C</p>
+          <p>Condizioni: ${data.current.condition.text}</p>
+          <p>Umidità: ${data.current.humidity}%</p>
+          <p>Vento: ${data.current.wind_kph} km/h</p>
+        `;
+      } catch (error) {
+        weatherDiv.innerHTML = "Errore: " + error.message;
+      }
+    }
+
+
+    document.getElementById("city").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        getWeather();
+      }
+    });
+  </script>
+
+</body>
+</html>
